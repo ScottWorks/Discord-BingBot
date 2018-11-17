@@ -11,10 +11,11 @@
     "url": "git+https://github.com/ScottWorks/Discord-SearchBot.git"
   },
   "keywords": [
-    "Chat",
-    "Bot",
+    "ChatBot",
+    "Bing-API",
     "Discord",
-    "Node",
+    "Discord-Bot",
+    "NodeJS",
     "Javascript"
   ],
   "author": "Courtney E. Scott",
