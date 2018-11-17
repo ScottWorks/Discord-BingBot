@@ -1,5 +1,5 @@
 {
-  "name": "discord-searchbot",
+  "name": "discord-BingBot",
   "version": "1.0.0",
   "description": "Simple chatbot that responds to search engine queries with the top 5 webpages.",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ScottWorks/Discord-SearchBot.git"
+    "url": "git+https://github.com/ScottWorks/Discord-BingBot.git"
   },
   "keywords": [
     "ChatBot",
@@ -21,9 +21,9 @@
   "author": "Courtney E. Scott",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ScottWorks/Discord-SearchBot/issues"
+    "url": "https://github.com/ScottWorks/Discord-BingBot/issues"
   },
-  "homepage": "https://github.com/ScottWorks/Discord-SearchBot#readme",
+  "homepage": "https://github.com/ScottWorks/Discord-BingBot#readme",
   "dependencies": {
     "discord.js": "^11.4.2",
     "dotenv": "^6.1.0"
