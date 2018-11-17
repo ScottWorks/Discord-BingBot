@@ -11,53 +11,59 @@ client.on('ready', () => {
 });
 
 client.on('message', (msg) => {
-  try {
-    const mention = msg.cleanContent;
+  const mention = msg.cleanContent;
 
-    // Check if mention of 'BingBot' is in message
-    if (mention.includes('@BingBot')) {
-      // // Extract search query
-      var query = mention
-        .replace('@BingBot', '')
-        .toLowerCase()
-        .trim();
+  // Check if mention of 'BingBot' is in message
+  if (mention.includes('@BingBot')) {
+    // Extract search query
+    var query = mention
+      .replace('@BingBot', '')
+      .toLowerCase()
+      .trim();
 
-      // Make a request to Bing API
-      https.get(
-        {
-          hostname: 'api.cognitive.microsoft.com',
-          path:
-            '/bing/v7.0/search?responseFilter=Webpages&count=5&q=' +
-            encodeURIComponent(`${query}`),
-          headers: { 'Ocp-Apim-Subscription-Key': AZURE_SUBSCRIPTION_KEY }
-        },
-        (res) => {
-          let body = '';
-          res.on('data', (part) => (body += part));
-          res.on('end', () => {
+    // Make a request to Bing API
+    https.get(
+      {
+        hostname: 'api.cognitive.microsoft.com',
+        path:
+          '/bing/v7.0/search?responseFilter=Webpages&count=5&safeSearch=Strict&q=' +
+          encodeURIComponent(`${query}`),
+        headers: { 'Ocp-Apim-Subscription-Key': AZURE_SUBSCRIPTION_KEY }
+      },
+      (res) => {
+        let body = '';
+
+        // Assemble response body
+        res.on('data', (part) => (body += part));
+        res.on('end', () => {
+          try {
             // Parse body of Bing API reply
             const parsedBody = JSON.parse(body).webPages.value;
 
             // Attatch links to discord reply
-            parsedBody.forEach((searchResult) => msg.reply(searchResult.url));
+            return parsedBody
+              .reverse()
+              .forEach((searchResult) => msg.reply(searchResult.url));
+          } catch (err) {
+            // Handle empty response
+            console.log(err.message);
+            return msg.reply(
+              'Sorry, I could not Bing that request. Try again...'
+            );
+          }
+        });
 
-            console.log('\nJSON Response:\n');
-            console.dir(JSON.parse(body).webPages.value, {
-              colors: false,
-              depth: null
-            });
-          });
-          res.on('error', (e) => {
-            console.log('Error: ' + e.message);
-            throw e;
-          });
-        }
-      );
-    } else {
-      return;
-    }
-  } catch (err) {
-    console.log(err);
+        // Handle errors from Bing API
+        res.on('error', (err) => {
+          console.log('Error: ' + err.message);
+          throw e;
+        });
+      }
+    );
+
+    // Return if @BingBot is not mentioned
+  } else {
+    return;
   }
 });
 
