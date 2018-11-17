@@ -6,7 +6,7 @@ The goal of this project was to accomplish several things:
 
 - [x] Learn how to spin a server using pure NodeJS
 - [x] Enhance my understanding of concepts related to server technology, i.e. Event Emitters, Event Listeners, and API's.
-- [ ] Win some swag in the [Discord Bot Competition](https://repl.it/talk/challenge/Discord-Bot-Competition/8403?ref=newsletter)
+- [ ] Win some swag in the [Discord Bot Competition](https://repl.it/talk/challenge/Discord-Bot-Competition/8403?ref=newsletter) (results pending)
 
 ## What is the BingBot?
 
