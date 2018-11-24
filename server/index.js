@@ -21,7 +21,7 @@ client.on('message', (msg) => {
       .toLowerCase()
       .trim();
 
-    var query, endpointOptions;
+    var query, endpointOptions, urlType;
 
     // Check if '-help' is in parsedMessage
     if (parsedMessage.includes('-help')) {
@@ -35,15 +35,19 @@ client.on('message', (msg) => {
     else if (parsedMessage.includes('-search')) {
       endpointOptions = 'search?responseFilter=WebPages&';
       query = parsedMessage.replace('-search', '').trim();
+      urlType = 'url';
     } else if (parsedMessage.includes('-videos')) {
       endpointOptions = 'videos/search?';
       query = parsedMessage.replace('-videos', '').trim();
+      urlType = 'contentUrl';
     } else if (parsedMessage.includes('-images')) {
       endpointOptions = 'images/search?';
       query = parsedMessage.replace('-images', '').trim();
+      urlType = 'contentUrl';
     } else if (parsedMessage.includes('-news')) {
       endpointOptions = 'news/search?';
       query = parsedMessage.replace('-news', '').trim();
+      urlType = 'url';
     } else return;
 
     // Make a request to Bing API
@@ -62,19 +66,12 @@ client.on('message', (msg) => {
         res.on('data', (part) => (body += part));
         res.on('end', () => {
           try {
-            var parsedBody;
-
-            // Parse body of Bing API reply
-            JSON.parse(body).webPages
-              ? (parsedBody = JSON.parse(body).webPages.value)
-              : (parsedBody = JSON.parse(body).value);
+            // if -search is prompted response body will include .webPages object
+            const { value } = JSON.parse(body).webPages || JSON.parse(body);
 
             // Attatch links to discord reply
-            return parsedBody.reverse().forEach((searchResult) => {
-              console.log(searchResult);
-              return searchResult.url
-                ? msg.reply(searchResult.url)
-                : msg.reply(searchResult.contentUrl);
+            return value.reverse().forEach((searchResult) => {
+              return msg.reply(searchResult[urlType]);
             });
           } catch (err) {
             // Handle empty response
