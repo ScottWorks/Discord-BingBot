@@ -15,18 +15,43 @@ client.on('message', (msg) => {
 
   // Check if mention of 'BingBot' is in message
   if (mention.includes('@BingBot')) {
-    // Extract search query
-    var query = mention
+    // Parse-out message and mention
+    var parsedMessage = mention
       .replace('@BingBot', '')
       .toLowerCase()
       .trim();
+
+    var query, endpointOptions;
+
+    // Check if '-help' is in parsedMessage
+    if (parsedMessage.includes('-help')) {
+      // Send help menu in response
+      return msg.reply(
+        '```\n Commands: \n -help \n -search \n -videos \n -images \n -news```'
+      );
+    }
+
+    // Switch logic that checks if '-search, - video, -images, or news' is in parsedMessage
+    else if (parsedMessage.includes('-search')) {
+      endpointOptions = 'search?responseFilter=WebPages&';
+      query = parsedMessage.replace('-search', '').trim();
+    } else if (parsedMessage.includes('-videos')) {
+      endpointOptions = 'videos/search?';
+      query = parsedMessage.replace('-videos', '').trim();
+    } else if (parsedMessage.includes('-images')) {
+      endpointOptions = 'images/search?';
+      query = parsedMessage.replace('-images', '').trim();
+    } else if (parsedMessage.includes('-news')) {
+      endpointOptions = 'news/search?';
+      query = parsedMessage.replace('-news', '').trim();
+    } else return;
 
     // Make a request to Bing API
     https.get(
       {
         hostname: 'api.cognitive.microsoft.com',
         path:
-          '/bing/v7.0/search?responseFilter=Webpages&count=5&safeSearch=Strict&q=' +
+          `/bing/v7.0/${endpointOptions}count=5&safeSearch=Strict&q=` +
           encodeURIComponent(`${query}`),
         headers: { 'Ocp-Apim-Subscription-Key': AZURE_SUBSCRIPTION_KEY }
       },
@@ -37,13 +62,20 @@ client.on('message', (msg) => {
         res.on('data', (part) => (body += part));
         res.on('end', () => {
           try {
+            var parsedBody;
+
             // Parse body of Bing API reply
-            const parsedBody = JSON.parse(body).webPages.value;
+            JSON.parse(body).webPages
+              ? (parsedBody = JSON.parse(body).webPages.value)
+              : (parsedBody = JSON.parse(body).value);
 
             // Attatch links to discord reply
-            return parsedBody
-              .reverse()
-              .forEach((searchResult) => msg.reply(searchResult.url));
+            return parsedBody.reverse().forEach((searchResult) => {
+              console.log(searchResult);
+              return searchResult.url
+                ? msg.reply(searchResult.url)
+                : msg.reply(searchResult.contentUrl);
+            });
           } catch (err) {
             // Handle empty response
             console.log(err.message);
@@ -60,10 +92,6 @@ client.on('message', (msg) => {
         });
       }
     );
-
-    // Return if @BingBot is not mentioned
-  } else {
-    return;
   }
 });
 
