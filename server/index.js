@@ -15,43 +15,56 @@ client.on('message', (msg) => {
 
   // Check if mention of 'BingBot' is in message
   if (mention.includes('@BingBot')) {
-    // Parse-out message and mention
-    var parsedMessage = mention
-      .replace('@BingBot', '')
-      .toLowerCase()
-      .trim();
+    try {
+      // Parse-out message and mention
+      var parsedMessage = mention
+        .replace('@BingBot', '')
+        .toLowerCase()
+        .trim();
 
-    var query, endpointOptions, urlType;
+      const SEARCH = 'search',
+        VIDEOS = 'videos',
+        IMAGES = 'images',
+        NEWS = 'news';
 
-    // Check if '-help' is in parsedMessage
-    if (parsedMessage.includes('-help')) {
-      // Send help menu in response
-      return msg.reply(
-        '```\n Commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
-      );
-    }
+      var query, endpointOptions, urlType;
 
-    // Switch logic that checks if '-search, - video, -images, or news' is in parsedMessage
-    else if (parsedMessage.includes('-search')) {
-      endpointOptions = 'search?responseFilter=WebPages&';
-      query = parsedMessage.replace('-search', '').trim();
-      urlType = 'url';
-    } else if (parsedMessage.includes('-videos')) {
-      endpointOptions = 'videos/search?';
-      query = parsedMessage.replace('-videos', '').trim();
-      urlType = 'contentUrl';
-    } else if (parsedMessage.includes('-images')) {
-      endpointOptions = 'images/search?';
-      query = parsedMessage.replace('-images', '').trim();
-      urlType = 'contentUrl';
-    } else if (parsedMessage.includes('-news')) {
-      endpointOptions = 'news/search?';
-      query = parsedMessage.replace('-news', '').trim();
-      urlType = 'url';
-    } else
+      // parse prefix from message, strip out "-"
+      const prefix = parsedMessage.match(/[-]\w+/g)[0].slice(1);
+
+      if (prefix === 'help') {
+        // Send help menu in response
+        return msg.reply(
+          '```\n Commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
+        );
+      } else if (
+        prefix === SEARCH ||
+        prefix === VIDEOS ||
+        prefix === IMAGES ||
+        prefix === NEWS
+      ) {
+        endpointOptions =
+          prefix === SEARCH
+            ? `${prefix}?responseFilter=WebPages&`
+            : `${prefix}/search?`;
+
+        // removes prefix from query string
+        query = parsedMessage.replace(`-${prefix}`, '').trim();
+
+        urlType = prefix === VIDEOS || prefix === IMAGES ? 'contentUrl' : 'url';
+      } else {
+        // Handles request with bad prefix
+        return msg.reply(
+          '```Please use one of the following commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
+        );
+      }
+    } catch (err) {
+      // Handles request without prefix
+      console.log(err.message);
       return msg.reply(
         '```Please use one of the following commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
       );
+    }
 
     // Make a request to Bing API
     https.get(
@@ -80,7 +93,7 @@ client.on('message', (msg) => {
             // Handle empty response
             console.log(err.message);
             return msg.reply(
-              'Sorry, I could not Bing that request. Try again...'
+              'Sorry, I could not Bing that request. Try again, use command "-help" for more information...'
             );
           }
         });
