@@ -27,7 +27,7 @@ client.on('message', (msg) => {
     if (parsedMessage.includes('-help')) {
       // Send help menu in response
       return msg.reply(
-        '```\n Commands: \n -help \n -search \n -videos \n -images \n -news```'
+        '```\n Commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
       );
     }
 
@@ -48,7 +48,10 @@ client.on('message', (msg) => {
       endpointOptions = 'news/search?';
       query = parsedMessage.replace('-news', '').trim();
       urlType = 'url';
-    } else return;
+    } else
+      return msg.reply(
+        '```Please use one of the following commands: \n -help \n -search \n -videos \n -images \n -news \n\n Example: \n "<BotName> -search Black Panther Showtimes" \n "<BotName> -videos Black Panther Trailer"```'
+      );
 
     // Make a request to Bing API
     https.get(
