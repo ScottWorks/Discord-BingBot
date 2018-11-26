@@ -4,23 +4,31 @@
 
 The goal of this project was to accomplish several things:
 
-- [x] Learn how to spin a server using pure NodeJS
-- [x] Enhance my understanding of concepts related to server technology, i.e. Event Emitters, Event Listeners, and API's.
+- [x] Spin up a server using pure Node.js
+- [x] Practice API design and other server related concepts
 - [ ] Win some swag in the [Discord Bot Competition](https://repl.it/talk/challenge/Discord-Bot-Competition/8403?ref=newsletter) (results pending)
 
 ## What is the BingBot?
 
-The BingBot is a simple chatbot that responds to search engine queries with the top 5 webpages.
+The BingBot is a simple chatbot that responds to search engine queries with the top 5 results.
 
 ## How do I use it?
 
-In the following [link](https://discordapp.com/api/oauth2/authorize?client_id=513027290771226640&scope=bot&permissions=1) you will be asked to to add BingBot to a server you manage.
+In the following [link](https://discordapp.com/api/oauth2/authorize?client_id=513027290771226640&permissions=0&scope=bot) you will be asked to to add BingBot to a server you manage.
 
 ![Add Bot](/assets/fig2.png)
 
-Once you've added BingBot to your server you can ask it to fetch the top five search results from [Bing.com](https://www.bing.com). All you need to do is call BingBot and enter your search.
+Once you've added BingBot to your server you can ask it to fetch the top five search results from [Bing.com](https://www.bing.com). All you need to do is call BingBot, specify a search category, and enter your search.
 
-Example: `@BingBot Black Panther Movie Trailer`
+Users can select any of the following commands:
+
+- `-search`
+- `-videos`
+- `-images`
+- `-news`
+- `-help`
+
+Example: `@BingBot -videos Black Panther Movie Trailer`
 
 [![BingBot Demo](assets/fig3.png)](https://res.cloudinary.com/dcgnyswpg/video/upload/v1542427318/BingBot-Demo_jqiauh.mp4)
 
